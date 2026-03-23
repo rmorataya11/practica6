@@ -12,7 +12,7 @@ function BotonEnviar() {
   const { pending } = useFormStatus();
   return (
     <button type="submit" disabled={pending} className={botonPrimario}>
-      {pending ? "Guardando..." : "Crear reserva"}
+      {pending ? "Guardando..." : "Confirmar reserva"}
     </button>
   );
 }
@@ -48,13 +48,11 @@ export function FormularioReserva({ servicios }: { servicios: Servicio[] }) {
 
       <div>
         <label className={label}>Servicio</label>
-        <select name="servicioId" className={input} defaultValue="">
-          <option value="" disabled>
-            Seleccione un servicio
-          </option>
+        <select name="servicioId" className={input}>
+          <option value="">Seleccione un servicio</option>
           {servicios.map((s) => (
             <option key={s.id} value={s.id}>
-              {s.nombre}
+              {s.nombre} ({s.duracion} min)
             </option>
           ))}
         </select>
