@@ -3,7 +3,7 @@ import { Geist } from "next/font/google";
 import { Nav } from "./components/nav";
 import "./globals.css";
 
-const geist = Geist({ subsets: ["latin"] });
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
 
 export const metadata: Metadata = {
   title: "Panel de reservas",
@@ -16,12 +16,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es">
+    <html lang="es" className={geist.variable}>
       <body
-        className={`${geist.className} bg-gray-50 text-gray-900 antialiased`}
+        className={`${geist.className} min-h-screen bg-slate-50 text-slate-900 antialiased`}
       >
         <Nav />
-        <main className="max-w-4xl mx-auto px-6 py-10">{children}</main>
+        <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-10 md:px-8">
+          {children}
+        </main>
       </body>
     </html>
   );

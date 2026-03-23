@@ -3,7 +3,14 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { crearServicio } from "@/app/actions/servicios";
-import { input, label, botonPrimario } from "@/app/lib/estilos";
+import {
+  input,
+  label,
+  botonPrimario,
+  mensajeError,
+  textoAyuda,
+  tituloPagina,
+} from "@/app/lib/estilos";
 
 const estadoInicial = { errores: {} as Record<string, string[]>, mensaje: "" };
 
@@ -20,15 +27,18 @@ export default function PaginaNuevoServicio() {
   const [estado, accion] = useActionState(crearServicio, estadoInicial);
 
   return (
-    <div className="max-w-md">
-      <h1 className="text-xl font-semibold mb-6">Nuevo servicio</h1>
+    <div className="mx-auto max-w-md">
+      <h1 className={tituloPagina}>Nuevo servicio</h1>
+      <p className={`${textoAyuda} mb-8 mt-1`}>
+        Define nombre, descripción y duración en minutos.
+      </p>
 
       <form action={accion} className="space-y-5">
         <div>
           <label className={label}>Nombre</label>
           <input name="nombre" type="text" className={input} />
           {estado.errores?.nombre && (
-            <p className="text-xs text-red-500 mt-1">{estado.errores.nombre}</p>
+            <p className={mensajeError}>{estado.errores.nombre}</p>
           )}
         </div>
 
@@ -41,9 +51,7 @@ export default function PaginaNuevoServicio() {
           <label className={label}>Duración (minutos)</label>
           <input name="duracion" type="number" min={1} className={input} />
           {estado.errores?.duracion && (
-            <p className="text-xs text-red-500 mt-1">
-              {estado.errores.duracion}
-            </p>
+            <p className={mensajeError}>{estado.errores.duracion}</p>
           )}
         </div>
 

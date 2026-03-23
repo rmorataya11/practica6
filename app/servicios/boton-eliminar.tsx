@@ -2,7 +2,7 @@
 
 import { eliminarServicio } from "@/app/actions/servicios";
 import { useState } from "react";
-import { botonPeligro } from "@/app/lib/estilos";
+import { botonPeligro, mensajeError } from "@/app/lib/estilos";
 
 export function BotonEliminarServicio({ id }: { id: number }) {
   const [error, setError] = useState<string | null>(null);
@@ -15,11 +15,11 @@ export function BotonEliminarServicio({ id }: { id: number }) {
   }
 
   return (
-    <div className="text-right">
-      <button onClick={manejarClick} className={botonPeligro}>
+    <div className="shrink-0 text-right">
+      <button type="button" onClick={manejarClick} className={botonPeligro}>
         Eliminar
       </button>
-      {error && <p className="text-xs text-red-400 mt-1">{error}</p>}
+      {error && <p className={`${mensajeError} max-w-[14rem]`}>{error}</p>}
     </div>
   );
 }

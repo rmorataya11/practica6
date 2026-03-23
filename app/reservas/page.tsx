@@ -2,12 +2,19 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { BotonCancelarReserva } from "./boton-cancelar";
 import { BotonConfirmarReserva } from "./boton-confirmar";
-import { tarjeta } from "@/app/lib/estilos";
+import {
+  botonPrimario,
+  tarjeta,
+  textoAyuda,
+  tituloPagina,
+} from "@/app/lib/estilos";
 
 const etiquetaEstado: Record<string, string> = {
-  pendiente: "bg-yellow-50 text-yellow-700 border-yellow-200",
-  confirmada: "bg-green-50 text-green-700 border-green-200",
-  cancelada: "bg-gray-100 text-gray-500 border-gray-200",
+  pendiente:
+    "border-amber-200 bg-amber-50 text-amber-800",
+  confirmada:
+    "border-emerald-200 bg-emerald-50 text-emerald-800",
+  cancelada: "border-slate-200 bg-slate-100 text-slate-600",
 };
 
 const estadosValidos = ["pendiente", "confirmada", "cancelada"] as const;
@@ -36,27 +43,29 @@ export default async function PaginaReservas({ searchParams }: Props) {
   const enlaceFiltro = (estado: string | null) =>
     estado ? `/reservas?estado=${estado}` : "/reservas";
 
-  const linkClass = (activo: boolean) =>
+  const pillClass = (activo: boolean) =>
     activo
-      ? "text-black font-medium text-sm border-b-2 border-black pb-0.5"
-      : "text-gray-500 text-sm hover:text-black";
+      ? "bg-emerald-700 text-white shadow-sm"
+      : "bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-slate-50 hover:text-slate-900";
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold">Reservas</h1>
-        <Link
-          href="/reservas/nueva"
-          className="bg-black text-white px-4 py-2 rounded text-sm hover:bg-gray-800 transition-colors"
-        >
+      <div className="mb-2 flex flex-col gap-4 sm:mb-6 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className={tituloPagina}>Reservas</h1>
+          <p className={`${textoAyuda} mt-1`}>
+            Citas agendadas y su estado.
+          </p>
+        </div>
+        <Link href="/reservas/nueva" className={`${botonPrimario} shrink-0`}>
           Nueva reserva
         </Link>
       </div>
 
-      <div className="flex flex-wrap gap-4 mb-6">
+      <div className="mb-6 flex flex-wrap gap-2">
         <Link
           href={enlaceFiltro(null)}
-          className={linkClass(estadoFiltro === undefined)}
+          className={`rounded-full px-3 py-1.5 text-sm font-medium transition ${pillClass(estadoFiltro === undefined)}`}
         >
           Todas
         </Link>
@@ -64,38 +73,46 @@ export default async function PaginaReservas({ searchParams }: Props) {
           <Link
             key={e}
             href={enlaceFiltro(e)}
-            className={linkClass(estadoFiltro === e)}
+            className={`rounded-full px-3 py-1.5 text-sm font-medium capitalize transition ${pillClass(estadoFiltro === e)}`}
           >
-            {e.charAt(0).toUpperCase() + e.slice(1)}
+            {e}
           </Link>
         ))}
       </div>
 
       {reservas.length === 0 ? (
-        <p className="text-sm text-gray-400">No hay reservas registradas.</p>
+        <div className={tarjeta}>
+          <p className="text-sm text-slate-500">
+            No hay reservas que coincidan con este criterio.
+          </p>
+        </div>
       ) : (
         <ul className="space-y-3">
           {reservas.map((reserva) => (
             <li
               key={reserva.id}
-              className={`${tarjeta} flex items-start justify-between`}
+              className={`${tarjeta} flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between`}
             >
-              <div>
-                <p className="font-medium text-sm">{reserva.nombre}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{reserva.correo}</p>
-                <p className="text-xs text-gray-500 mt-1">
-                  {reserva.servicio.nombre} -{" "}
-                  {new Date(reserva.fecha).toLocaleString("es-SV")}
+              <div className="min-w-0 flex-1">
+                <p className="font-medium text-slate-900">{reserva.nombre}</p>
+                <p className="mt-0.5 text-xs text-slate-500">{reserva.correo}</p>
+                <p className="mt-1 text-xs text-slate-600">
+                  {reserva.servicio.nombre}
+                  <span className="text-slate-400"> · </span>
+                  {new Date(reserva.fecha).toLocaleString("es-SV", {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  })}
                 </p>
                 <span
-                  className={`inline-block mt-2 text-xs px-2 py-0.5 rounded border ${
+                  className={`mt-2 inline-block rounded-md border px-2 py-0.5 text-xs font-medium capitalize ${
                     etiquetaEstado[reserva.estado] ?? etiquetaEstado.pendiente
                   }`}
                 >
                   {reserva.estado}
                 </span>
               </div>
-              <div className="flex flex-col items-end gap-2 shrink-0 ml-4">
+              <div className="flex shrink-0 flex-col items-stretch gap-2 sm:items-end sm:ml-4">
                 <BotonConfirmarReserva
                   id={reserva.id}
                   estado={reserva.estado}

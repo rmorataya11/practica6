@@ -3,7 +3,12 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { crearReserva } from "@/app/actions/reservas";
-import { input, label, botonPrimario } from "@/app/lib/estilos";
+import {
+  input,
+  label,
+  botonPrimario,
+  mensajeError,
+} from "@/app/lib/estilos";
 import type { Servicio } from "@prisma/client";
 
 const estadoInicial = { errores: {} as Record<string, string[]>, mensaje: "" };
@@ -26,7 +31,7 @@ export function FormularioReserva({ servicios }: { servicios: Servicio[] }) {
         <label className={label}>Nombre</label>
         <input name="nombre" type="text" className={input} />
         {estado.errores?.nombre && (
-          <p className="text-xs text-red-500 mt-1">{estado.errores.nombre}</p>
+          <p className={mensajeError}>{estado.errores.nombre}</p>
         )}
       </div>
 
@@ -34,7 +39,7 @@ export function FormularioReserva({ servicios }: { servicios: Servicio[] }) {
         <label className={label}>Correo</label>
         <input name="correo" type="email" className={input} />
         {estado.errores?.correo && (
-          <p className="text-xs text-red-500 mt-1">{estado.errores.correo}</p>
+          <p className={mensajeError}>{estado.errores.correo}</p>
         )}
       </div>
 
@@ -42,7 +47,7 @@ export function FormularioReserva({ servicios }: { servicios: Servicio[] }) {
         <label className={label}>Fecha y hora</label>
         <input name="fecha" type="datetime-local" className={input} />
         {estado.errores?.fecha && (
-          <p className="text-xs text-red-500 mt-1">{estado.errores.fecha}</p>
+          <p className={mensajeError}>{estado.errores.fecha}</p>
         )}
       </div>
 
@@ -57,9 +62,7 @@ export function FormularioReserva({ servicios }: { servicios: Servicio[] }) {
           ))}
         </select>
         {estado.errores?.servicioId && (
-          <p className="text-xs text-red-500 mt-1">
-            {estado.errores.servicioId}
-          </p>
+          <p className={mensajeError}>{estado.errores.servicioId}</p>
         )}
       </div>
 

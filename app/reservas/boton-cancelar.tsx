@@ -2,7 +2,7 @@
 
 import { cancelarReserva } from "@/app/actions/reservas";
 import { useState } from "react";
-import { botonPeligro } from "@/app/lib/estilos";
+import { botonPeligro, mensajeError } from "@/app/lib/estilos";
 
 export function BotonCancelarReserva({
   id,
@@ -25,11 +25,11 @@ export function BotonCancelarReserva({
   }
 
   return (
-    <div className="text-right">
-      <button onClick={manejarClick} className={botonPeligro}>
-        Cancelar
+    <div className="w-full text-right sm:w-auto">
+      <button type="button" onClick={manejarClick} className={botonPeligro}>
+        Cancelar reserva
       </button>
-      {error && <p className="text-xs text-red-400 mt-1">{error}</p>}
+      {error && <p className={mensajeError}>{error}</p>}
     </div>
   );
 }

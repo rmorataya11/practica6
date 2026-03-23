@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { botonPrimario, tarjeta, textoAyuda, tituloPagina } from "@/app/lib/estilos";
 
 export default async function PaginaInicio() {
   const [totalServicios, totalReservas] = await Promise.all([
@@ -9,21 +10,35 @@ export default async function PaginaInicio() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold mb-1">Bienvenido</h1>
-      <div className="grid grid-cols-2 gap-4 mb-10">
-        <div className="border rounded-lg p-6 bg-white">
-          <p className="text-xs text-gray-400 uppercase mb-1">Servicios</p>
-          <p className="text-3xl font-semibold">{totalServicios}</p>
+      <h1 className={tituloPagina}>Bienvenido</h1>
+      <p className={`${textoAyuda} mb-8 mt-1`}>
+        Resumen de tu panel de citas y servicios.
+      </p>
+      <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div
+          className={`${tarjeta} relative overflow-hidden border-emerald-100`}
+        >
+          <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-emerald-500 to-teal-500" />
+          <p className="mb-1 text-xs font-medium uppercase tracking-wide text-slate-500">
+            Servicios
+          </p>
+          <p className="text-3xl font-semibold tabular-nums text-slate-900">
+            {totalServicios}
+          </p>
         </div>
-        <div className="border rounded-lg p-6 bg-white">
-          <p className="text-xs text-gray-400 uppercase mb-1">Reservas</p>
-          <p className="text-3xl font-semibold">{totalReservas}</p>
+        <div
+          className={`${tarjeta} relative overflow-hidden border-sky-100`}
+        >
+          <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-sky-500 to-indigo-500" />
+          <p className="mb-1 text-xs font-medium uppercase tracking-wide text-slate-500">
+            Reservas
+          </p>
+          <p className="text-3xl font-semibold tabular-nums text-slate-900">
+            {totalReservas}
+          </p>
         </div>
       </div>
-      <Link
-        href="/servicios/nuevo"
-        className="bg-black text-white px-4 py-2 rounded text-sm"
-      >
+      <Link href="/servicios/nuevo" className={botonPrimario}>
         Agregar servicio
       </Link>
     </div>
