@@ -9,11 +9,36 @@ const etiquetaEstado: Record<string, string> = {
   cancelada: "bg-gray-100 text-gray-500 border-gray-200",
 };
 
-export default async function PaginaReservas() {
+const estadosValidos = ["pendiente", "confirmada", "cancelada"] as const;
+
+type Props = {
+  searchParams: Promise<{ estado?: string | string[] }>;
+};
+
+export default async function PaginaReservas({ searchParams }: Props) {
+  const sp = await searchParams;
+  const raw = sp.estado;
+  const estadoParam =
+    typeof raw === "string" ? raw : Array.isArray(raw) ? raw[0] : undefined;
+  const estadoFiltro =
+    estadoParam &&
+    estadosValidos.includes(estadoParam as (typeof estadosValidos)[number])
+      ? estadoParam
+      : undefined;
+
   const reservas = await prisma.reserva.findMany({
+    where: estadoFiltro ? { estado: estadoFiltro } : undefined,
     orderBy: { fecha: "asc" },
     include: { servicio: true },
   });
+
+  const enlaceFiltro = (estado: string | null) =>
+    estado ? `/reservas?estado=${estado}` : "/reservas";
+
+  const linkClass = (activo: boolean) =>
+    activo
+      ? "text-black font-medium text-sm border-b-2 border-black pb-0.5"
+      : "text-gray-500 text-sm hover:text-black";
 
   return (
     <div>
@@ -25,6 +50,24 @@ export default async function PaginaReservas() {
         >
           Nueva reserva
         </Link>
+      </div>
+
+      <div className="flex flex-wrap gap-4 mb-6">
+        <Link
+          href={enlaceFiltro(null)}
+          className={linkClass(estadoFiltro === undefined)}
+        >
+          Todas
+        </Link>
+        {estadosValidos.map((e) => (
+          <Link
+            key={e}
+            href={enlaceFiltro(e)}
+            className={linkClass(estadoFiltro === e)}
+          >
+            {e.charAt(0).toUpperCase() + e.slice(1)}
+          </Link>
+        ))}
       </div>
 
       {reservas.length === 0 ? (
