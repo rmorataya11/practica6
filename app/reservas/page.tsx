@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { BotonCancelarReserva } from "./boton-cancelar";
+import { BotonConfirmarReserva } from "./boton-confirmar";
 import { tarjeta } from "@/app/lib/estilos";
 
 const etiquetaEstado: Record<string, string> = {
@@ -94,7 +95,16 @@ export default async function PaginaReservas({ searchParams }: Props) {
                   {reserva.estado}
                 </span>
               </div>
-              <BotonCancelarReserva id={reserva.id} estado={reserva.estado} />
+              <div className="flex flex-col items-end gap-2 shrink-0 ml-4">
+                <BotonConfirmarReserva
+                  id={reserva.id}
+                  estado={reserva.estado}
+                />
+                <BotonCancelarReserva
+                  id={reserva.id}
+                  estado={reserva.estado}
+                />
+              </div>
             </li>
           ))}
         </ul>

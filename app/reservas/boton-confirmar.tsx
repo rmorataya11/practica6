@@ -1,10 +1,10 @@
 "use client";
 
-import { cancelarReserva } from "@/app/actions/reservas";
+import { confirmarReserva } from "@/app/actions/reservas";
 import { useState } from "react";
-import { botonPeligro } from "@/app/lib/estilos";
+import { botonPrimario } from "@/app/lib/estilos";
 
-export function BotonCancelarReserva({
+export function BotonConfirmarReserva({
   id,
   estado,
 }: {
@@ -13,12 +13,12 @@ export function BotonCancelarReserva({
 }) {
   const [error, setError] = useState<string | null>(null);
 
-  if (estado === "cancelada") {
+  if (estado !== "pendiente") {
     return null;
   }
 
   async function manejarClick() {
-    const resultado = await cancelarReserva(id);
+    const resultado = await confirmarReserva(id);
     if (!resultado.exito) {
       setError(resultado.mensaje ?? "Error desconocido.");
     }
@@ -26,8 +26,8 @@ export function BotonCancelarReserva({
 
   return (
     <div className="text-right">
-      <button onClick={manejarClick} className={botonPeligro}>
-        Cancelar
+      <button type="button" onClick={manejarClick} className={botonPrimario}>
+        Confirmar
       </button>
       {error && <p className="text-xs text-red-400 mt-1">{error}</p>}
     </div>

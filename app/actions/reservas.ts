@@ -106,3 +106,22 @@ export async function cancelarReserva(id: number) {
     return { exito: false, mensaje: "No se pudo cancelar la reserva." };
   }
 }
+
+export async function confirmarReserva(id: number) {
+  try {
+    const resultado = await prisma.reserva.updateMany({
+      where: { id, estado: "pendiente" },
+      data: { estado: "confirmada" },
+    });
+    if (resultado.count === 0) {
+      return {
+        exito: false,
+        mensaje: "Solo se pueden confirmar reservas pendientes.",
+      };
+    }
+    revalidatePath("/reservas");
+    return { exito: true };
+  } catch {
+    return { exito: false, mensaje: "No se pudo confirmar la reserva." };
+  }
+}
