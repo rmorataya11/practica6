@@ -94,14 +94,15 @@ export async function crearReserva(_estadoPrevio: any, formData: FormData) {
   redirect("/reservas");
 }
 
-export async function eliminarReserva(id: number) {
+export async function cancelarReserva(id: number) {
   try {
-    await prisma.reserva.delete({
+    await prisma.reserva.update({
       where: { id },
+      data: { estado: "cancelada" },
     });
     revalidatePath("/reservas");
     return { exito: true };
   } catch {
-    return { exito: false, mensaje: "No se pudo eliminar la reserva." };
+    return { exito: false, mensaje: "No se pudo cancelar la reserva." };
   }
 }

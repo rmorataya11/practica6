@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { BotonEliminarReserva } from "./boton-eliminar";
+import { BotonCancelarReserva } from "./boton-cancelar";
 import { tarjeta } from "@/app/lib/estilos";
 
 const etiquetaEstado: Record<string, string> = {
@@ -51,7 +51,7 @@ export default async function PaginaReservas() {
                   {reserva.estado}
                 </span>
               </div>
-              <BotonEliminarReserva id={reserva.id} />
+              <BotonCancelarReserva id={reserva.id} estado={reserva.estado} />
             </li>
           ))}
         </ul>
