@@ -12,6 +12,19 @@ const EsquemaReserva = z.object({
   servicioId: z.coerce.number({ message: "Debe seleccionar un servicio." }),
 });
 
+function sumarMinutos(fecha: Date, minutos: number) {
+  return new Date(fecha.getTime() + minutos * 60_000);
+}
+
+function intervalosSeSolapan(
+  aInicio: Date,
+  aFin: Date,
+  bInicio: Date,
+  bFin: Date
+) {
+  return aInicio < bFin && bInicio < aFin;
+}
+
 export async function crearReserva(_estadoPrevio: any, formData: FormData) {
   const campos = EsquemaReserva.safeParse({
     nombre: formData.get("nombre"),
@@ -25,6 +38,47 @@ export async function crearReserva(_estadoPrevio: any, formData: FormData) {
       errores: campos.error.flatten().fieldErrors,
       mensaje: "Error de validación.",
     };
+  }
+
+  const servicio = await prisma.servicio.findUnique({
+    where: { id: campos.data.servicioId },
+  });
+
+  if (!servicio) {
+    return {
+      errores: {
+        servicioId: ["El servicio no existe."],
+      },
+      mensaje: "Error de validación.",
+    };
+  }
+
+  const inicioNuevo = new Date(campos.data.fecha);
+  const finNuevo = sumarMinutos(inicioNuevo, servicio.duracion);
+
+  const existentes = await prisma.reserva.findMany({
+    where: {
+      servicioId: campos.data.servicioId,
+      estado: { not: "cancelada" },
+    },
+    include: { servicio: true },
+  });
+
+  for (const r of existentes) {
+    const inicioExistente = r.fecha;
+    const finExistente = sumarMinutos(r.fecha, r.servicio.duracion);
+    if (
+      intervalosSeSolapan(inicioNuevo, finNuevo, inicioExistente, finExistente)
+    ) {
+      return {
+        errores: {
+          fecha: [
+            "Ya existe una reserva que se solapa con este horario para el servicio.",
+          ],
+        },
+        mensaje: "Error de validación.",
+      };
+    }
   }
 
   await prisma.reserva.create({
